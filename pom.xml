@@ -24,7 +24,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <!-- Spring -->
@@ -108,6 +108,11 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.37</version>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.1.4</version>
     </dependency>
     <dependency>
       <groupId>c3p0</groupId>
