@@ -14,6 +14,10 @@ public class StudentDaoTest extends BaseTest {
     @Test
     public void demo1(){
         List<Student> studentList = studentDao.queryStudentList();
-        System.out.println(studentList.size());
+//        System.out.println(studentList.size());
+        for (Student student : studentList){
+            System.out.println(student);
+        }
     }
+
 }
