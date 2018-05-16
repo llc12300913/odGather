@@ -126,6 +126,20 @@
       <version>3.1.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/xstream/xstream -->
+    <dependency>
+      <groupId>xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+
+
   </dependencies>
 
   <build>
