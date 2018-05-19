@@ -7,6 +7,7 @@ import org.dom4j.DocumentException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,15 +56,16 @@ public class IndexController {
             String content = map.get("Content");
 
             String message = null;
-            if ("text".equals(msgType)){
-                TextMessage textMessage = new TextMessage();
-                textMessage.setFromUserName(toUserName);
-                textMessage.setToUserName(fromUserName);
-                textMessage.setMsgType("text");
-                textMessage.setCreateTime(new Date().getTime());
-                textMessage.setContent("您发送的消息是：" + content);
-
-                message = MessageUtil.textMessageToXml(textMessage);
+            if (MessageUtil.MESSAGE_TEXT.equals(msgType)){
+                if ("1".equals(content)){
+                    message = MessageUtil.initText(toUserName, fromUserName, "文字回复内容");
+                }else if ("2".equals(content)){
+                    message = MessageUtil.initNewsMessage(toUserName, fromUserName);
+                }else if ("3".equals(content)){
+                    message = MessageUtil.initImageMessage(toUserName, fromUserName);
+                }else if ("4".equals(content)){
+                    message = MessageUtil.initMusicMessage(toUserName, fromUserName);
+                }
             }
             System.out.println(message);
             response.getWriter().write(message);
@@ -77,6 +79,12 @@ public class IndexController {
             }
         }
 
+    }
+
+    @RequestMapping(value = "/test", produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String test(){
+        return "您发送的消息：短发发送到";
     }
 
 }
