@@ -64,6 +64,17 @@ public class MessageUtil {
         return map;
     }
 
+    public static String menuText(){
+        StringBuffer sb = new StringBuffer();
+        sb.append("欢迎关注本公众号！\n\n");
+        sb.append("回复1：...\n");
+        sb.append("回复2：...\n");
+        sb.append("回复3：...\n\n");
+        sb.append("回复4：...");
+        return sb.toString();
+    }
+
+
     /**
      *
      * @param textMessage
@@ -194,4 +205,6 @@ public class MessageUtil {
         message = musicMessageToXml(musicMessage);
         return message;
     }
+
+
 }

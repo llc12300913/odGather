@@ -20,6 +20,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +30,23 @@ import java.util.Map;
  */
 public class WeixinUtil {
     private static final String APPID = "wxe9a70e0d79ac1d0d";
+
     private static final String APPSECRET = "191480c0d6371687d2d659f52c8684c8";
+
     private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+
     private static final String UPLOAD_URL = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
+
     private static final String CREATE_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
+
+    private static final String JS_AUTHOR_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&" +
+            "redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
+
+    private static final String JS_AUTHOR_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&" +
+            "secret=SECRET&code=CODE&grant_type=authorization_code";
+
+    private static final String JS_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+
 
     private static Map<String, Object> GLOBAL_WEIXIN_CACHE = new HashMap<String, Object>();
 
@@ -123,6 +137,14 @@ public class WeixinUtil {
         return token;
     }
 
+    /**
+     * 上传文件
+     * @param filePath
+     * @param accessToken
+     * @param type
+     * @return
+     * @throws IOException
+     */
 
     public static String upload(String filePath, String accessToken,String type) throws IOException {
         File file = new File(filePath);
@@ -230,7 +252,7 @@ public class WeixinUtil {
         ViewButton button21 = new ViewButton();
         button21.setName("view按钮");
         button21.setType("view");
-        button21.setUrl("http://www.baidu.com");
+        button21.setUrl("http://devllc.s1.natapp.cc/wxindex/author");
 
         ClickButton button31 = new ClickButton();
         button31.setName("扫码按钮");
@@ -250,6 +272,13 @@ public class WeixinUtil {
         return menu;
     }
 
+    /**
+     * 生成菜单
+     * @param token
+     * @param menu
+     * @return
+     * @throws IOException
+     */
     public static int createMenu(String token, String menu) throws IOException {
         int result = 0;
         String url = CREATE_MENU_URL.replace("ACCESS_TOKEN", token);
@@ -259,5 +288,33 @@ public class WeixinUtil {
         }
 
         return result;
+    }
+
+    /**
+     * 生成网页授权url
+     * @return
+     */
+    public static String genJsAuthorUrl(){
+        String authorCallBackUrl = "http://devllc.s1.natapp.cc/wxindex/authorcallback";
+        String url = JS_AUTHOR_URL.replace("APPID", APPID).replace("REDIRECT_URI", URLEncoder.encode(authorCallBackUrl)).replace("SCOPE", "snsapi_userinfo");
+        return url;
+    }
+
+    /**
+     * 生成网页授权ACCESSTOKEN URL
+     * @return
+     */
+    public static String genJsAuthorAccessTokenUrl(String code){
+        String url = JS_AUTHOR_ACCESS_TOKEN_URL.replace("APPID", APPID).replace("SECRET", APPSECRET).replace("CODE", code);
+        return url;
+    }
+
+
+    /**
+     * 生成获取用户信息URL
+     */
+    public static String genJSUserInfoUrl(String access_token, String openId){
+        String url = JS_USERINFO_URL.replace("ACCESS_TOKEN", access_token).replace("OPENID", openId);
+        return url;
     }
 }

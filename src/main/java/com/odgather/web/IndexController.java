@@ -1,19 +1,16 @@
 package com.odgather.web;
 
-import com.odgather.po.TextMessage;
+import com.alibaba.fastjson.JSONObject;
 import com.odgather.utils.CheckUtil;
 import com.odgather.utils.MessageUtil;
-import org.dom4j.DocumentException;
+import com.odgather.utils.WeixinUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
 import java.util.Map;
 
 @Controller
@@ -66,25 +63,82 @@ public class IndexController {
                 }else if ("4".equals(content)){
                     message = MessageUtil.initMusicMessage(toUserName, fromUserName);
                 }
+            }else if (MessageUtil.MESSAGE_EVNET.equals(msgType)){
+                String  eventType = map.get("Event");
+                if (MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){
+
+                }else if (MessageUtil.MESSAGE_CLICK.equals(eventType)){
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+                }else if (MessageUtil.MESSAGE_VIEW.equals(eventType)){
+//                    String url = map.get("EventKey");
+//                    message = MessageUtil.initText(toUserName, fromUserName, url);
+                }else if (MessageUtil.MESSAGE_SCANCODE.equals(eventType)){
+//                    String key = map.get("EventKey");
+//                    message = MessageUtil.initText(toUserName, fromUserName, key);
+                }
+            }else if (MessageUtil.MESSAGE_LOCATION.equals(msgType)){
+//                String label = map.get("Label");
+//                message = MessageUtil.initText(toUserName, fromUserName, label);
             }
-            System.out.println(message);
-            response.getWriter().write(message);
+            if (message != null){
+                System.out.println(message);
+                response.getWriter().write(message);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                response.getWriter().close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-
     }
 
+    /**
+     * 网页授权
+     * @param response
+     */
+    @RequestMapping(value = "/author")
+    public String jsAuthor(HttpServletResponse response){
+        String authorUrl = WeixinUtil.genJsAuthorUrl();
+//        try {
+//            response.sendRedirect(authorUrl);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        return "redirect:"+authorUrl;
+    }
+
+    /**
+     * 网页授权回调地址
+     * @throws IOException
+     */
+    @RequestMapping(value = "/authorcallback")
+    public String authorCallBack(HttpServletRequest request){
+        String code = request.getParameter("code");
+        String url = WeixinUtil.genJsAuthorAccessTokenUrl(code);
+
+        try {
+            JSONObject jsonObject = WeixinUtil.doGetStr(url);
+            String openid = jsonObject.getString("openid");
+            String access_token = jsonObject.getString("access_token");
+
+            url = WeixinUtil.genJSUserInfoUrl(access_token, openid);
+            jsonObject = WeixinUtil.doGetStr(url);
+            System.out.println(jsonObject);
+
+            return "author";
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     @RequestMapping(value = "/test", produces="text/html;charset=UTF-8")
-    @ResponseBody
-    public String test(){
-        return "您发送的消息：短发发送到";
+    public void test(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String param1 = (String) request.getParameter("a");
+        String param2 = (String) request.getParameter("b");
+
+        response.getWriter().write(param1 + param2);
+
+//        return "您发送的消息：短发发送到";
     }
 
 }
